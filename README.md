@@ -2,8 +2,9 @@
 This repository demonstrates how one could combine great libraries, tools and Kotlin 
 language features like context receivers to work with databases in a convenient and reactive way. 
 The tools include:
-* [Kotlin](https://kotlinlang.org/) with [Gradle](https://kotlinlang.org/docs/gradle.html)
-* [Spring Boot Framework](https://spring.io/projects/spring-boot)
+* [Kotlin](https://kotlinlang.org/) with [Arrow](https://arrow-kt.io/) 
+* [Gradle](https://kotlinlang.org/docs/gradle.html) build based on Kotlin
+* Wired together with [Spring Boot Framework](https://spring.io/projects/spring-boot)
 * Reactive database access with [R2DBC ](https://r2dbc.io/)
 * Typesafe SQL via [JOOQ](https://www.jooq.org/)
 * Database Migrations using [Flyway](https://flywaydb.org/)
@@ -175,7 +176,7 @@ Run the demo
 
 or run the tests
 ```shell
-./gradlew test
+./gradlew flywayMigrate test
 ```
 
 Use pgadmin to look at the database schema and data at: http://localhost:5050. Use `postgres` for the host to connect to.
