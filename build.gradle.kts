@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "3.0.0-SNAPSHOT"
+    id("org.springframework.boot") version "3.0.0-RC1"
     id("io.spring.dependency-management") version "1.0.14.RELEASE"
     id("org.flywaydb.flyway") version "9.4.0"
     id("dev.monosoul.jooq-docker") version "1.3.11"
