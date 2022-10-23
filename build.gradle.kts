@@ -2,22 +2,21 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("org.springframework.boot") version "3.0.0-RC1"
-    id("io.spring.dependency-management") version "1.0.14.RELEASE"
-    id("org.flywaydb.flyway") version "9.4.0"
-    id("dev.monosoul.jooq-docker") version "1.3.11"
+    id("io.spring.dependency-management") version "1.1.0"
+    id("org.flywaydb.flyway") version "9.5.1"
+    id("dev.monosoul.jooq-docker") version "1.3.12"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
     kotlin("jvm") version "1.7.20"
     kotlin("plugin.spring") version "1.7.20"
 }
 
 group = "sbuettner.demo"
-version = "0.0.1-SNAPSHOT"
+version = "0.0.1"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
     maven { url = uri("https://repo.spring.io/milestone") }
-    maven { url = uri("https://repo.spring.io/snapshot") }
 }
 
 dependencies {

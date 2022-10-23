@@ -10,12 +10,8 @@ The tools include:
 * Database Migrations using [Flyway](https://flywaydb.org/)
 * [Postgres](https://www.postgresql.org/) database
 
-### Dependency remarks
-Some libraries that are used are currently unreleased 
-snapshot versions. They will be updated to proper releases as soon as they are published.
-
 ### Requirements
-* Java 17 (install via the [SDK Man](https://sdkman.io/)
+* Java 17 (install via the [SDK Man](https://sdkman.io/))
 * Docker with [Docker Compose](https://docs.docker.com/compose/)
 
 ## Kotlin database access
@@ -171,7 +167,7 @@ docker-compose up
 
 Run the demo
 ```shell
-./gradlew bootRun
+./gradlew flywayMigrate bootRun
 ```
 
 or run the tests
