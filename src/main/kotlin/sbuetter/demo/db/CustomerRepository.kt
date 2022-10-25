@@ -1,7 +1,6 @@
 package sbuetter.demo.db
 
 import kotlinx.coroutines.reactive.awaitFirst
-import kotlinx.coroutines.reactive.awaitLast
 import org.jooq.DSLContext
 import org.springframework.stereotype.Component
 import sbuetter.demo.model.Customer
@@ -11,7 +10,7 @@ import sbuettner.demo.db.tables.references.CUSTOMERS
 @Component
 class CustomerRepository(private val dsl: DSLContext) {
 
-    suspend fun deleteAll() = dsl.deleteFrom(CUSTOMERS).awaitLast()
+    suspend fun deleteAll() = dsl.deleteFrom(CUSTOMERS).awaitFirst()
 
     suspend fun save(customer: Customer) = dsl.insertInto(CUSTOMERS)
         .set(CUSTOMERS.ID, customer.id.value)

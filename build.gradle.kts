@@ -26,7 +26,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("org.springframework.boot:spring-boot-starter-jooq")
-    implementation("io.r2dbc:r2dbc-pool:0.9.2.RELEASE")
+    implementation("io.r2dbc:r2dbc-pool:1.0.0.RC1")
     implementation("org.postgresql:r2dbc-postgresql:1.0.0.RC1")
 
     val jooqVersion = "3.17.4"

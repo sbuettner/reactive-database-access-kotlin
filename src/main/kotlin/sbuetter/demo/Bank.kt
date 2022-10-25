@@ -2,7 +2,6 @@ package sbuetter.demo
 
 import arrow.core.Either
 import arrow.core.Either.Companion.catch
-import arrow.core.continuations.either
 import org.jooq.DSLContext
 import org.jooq.exception.DataAccessException
 import org.springframework.stereotype.Service
@@ -25,21 +24,21 @@ class Bank(
 ) {
 
     suspend fun clean(): Either<Error.Database, Int> = catch {
-        customerRepository.deleteAll()
+        dslContext.transactional {
+            customerRepository.deleteAll()
+        }
     }.mapLeft { e: Throwable -> Error.Database(e) }
 
-    suspend fun createCustomer(name: String) = either {
+    suspend fun createCustomer(name: String) = catch {
         val customer = Customer(
             id = Customer.Id(UUID.randomUUID()), name = name
         )
-        saveCustomer(customer).bind()
-    }
-
-    private suspend fun saveCustomer(customer: Customer): Either<Error.CreateCustomer, Customer> = catch {
-        customerRepository.save(customer)
+        dslContext.transactional {
+            customerRepository.save(customer)
+        }
     }.mapLeft { e: Throwable ->
         when {
-            e.isConstraintException("customers_name_key") -> Error.CreateCustomer.CustomerNameAlreadyExists(customer.name)
+            e.isConstraintException("customers_name_key") -> Error.CreateCustomer.CustomerNameAlreadyExists(name)
             else -> Error.Database(e)
         }
     }
