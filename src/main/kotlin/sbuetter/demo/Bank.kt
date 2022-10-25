@@ -26,7 +26,7 @@ class Bank(
 
     suspend fun clean(): Either<Error.Database, Int> = catch {
         customerRepository.deleteAll()
-    }.mapLeft { e -> Error.Database(e) }
+    }.mapLeft { e: Throwable -> Error.Database(e) }
 
     suspend fun createCustomer(name: String) = either {
         val customer = Customer(
@@ -37,7 +37,7 @@ class Bank(
 
     private suspend fun saveCustomer(customer: Customer): Either<Error.CreateCustomer, Customer> = catch {
         customerRepository.save(customer)
-    }.mapLeft { e ->
+    }.mapLeft { e: Throwable ->
         when {
             e.isConstraintException("customers_name_key") -> Error.CreateCustomer.CustomerNameAlreadyExists(customer.name)
             else -> Error.Database(e)
@@ -46,10 +46,13 @@ class Bank(
 
     suspend fun openAccount(customerId: Customer.Id, name: String): Either<Error.OpenAccount, Account> = catch {
         val account = Account(
-            id = Account.Id(UUID.randomUUID()), customerId = customerId, name = name, balance = MonetaryAmount(0)
+            id = Account.Id(UUID.randomUUID()),
+            customerId = customerId,
+            name = name,
+            balance = MonetaryAmount(0)
         )
         dslContext.transactional { accountRepository.save(account) }
-    }.mapLeft { e ->
+    }.mapLeft { e: Throwable ->
         when {
             e.isConstraintException("accounts_customer_id_fkey") -> Error.OpenAccount.CustomerNotFound(customerId)
             else -> Error.Database(e)

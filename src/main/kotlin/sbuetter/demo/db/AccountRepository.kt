@@ -2,19 +2,20 @@ package sbuetter.demo.db
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.reactive.awaitFirst
 import kotlinx.coroutines.reactive.awaitFirstOrNull
-import kotlinx.coroutines.reactive.awaitSingle
 import org.jooq.DSLContext
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectFrom
+import org.jooq.kotlin.intoList
 import org.springframework.stereotype.Component
 import sbuetter.demo.model.Account
 import sbuetter.demo.model.AccountWithTransactions
 import sbuetter.demo.model.Customer
 import sbuetter.demo.model.MonetaryAmount
 import sbuetter.demo.model.Transaction
-import sbuettner.demo.db.Tables.ACCOUNTS
-import sbuettner.demo.db.Tables.TRANSACTIONS
+import sbuettner.demo.db.tables.Accounts.Companion.ACCOUNTS
+import sbuettner.demo.db.tables.Transactions.Companion.TRANSACTIONS
 import sbuettner.demo.db.tables.records.AccountsRecord
 
 @Component
@@ -26,7 +27,7 @@ class AccountRepository(private val dsl: DSLContext) {
         .set(ACCOUNTS.CUSTOMER_ID, account.customerId.value)
         .set(ACCOUNTS.BALANCE, account.balance.value)
         .returning()
-        .awaitSingle().toAccount()
+        .awaitFirst().toAccount()
 
     @Suppress("UNCHECKED_CAST")
     suspend fun fetchAccountsWithTransactions(customerId: Customer.Id): Flow<AccountWithTransactions> {
@@ -34,7 +35,7 @@ class AccountRepository(private val dsl: DSLContext) {
             *ACCOUNTS.fields(),
             multiset(
                 selectFrom(TRANSACTIONS).where(TRANSACTIONS.FROM_ACCOUNT_ID.eq(ACCOUNTS.ID))
-            ).`as`("tx").convertFrom { r -> r.map { it.toTransaction() } }
+            ).`as`("tx").intoList { it.toTransaction() }
         ).from(ACCOUNTS).where(ACCOUNTS.CUSTOMER_ID.eq(customerId.value))
             .toFlow().map {
                 val account = it.into(ACCOUNTS).toAccount()
@@ -44,10 +45,10 @@ class AccountRepository(private val dsl: DSLContext) {
     }
 
     fun AccountsRecord.toAccount() = Account(
-        id = Account.Id(id),
-        name = name,
-        balance = MonetaryAmount(balance),
-        customerId = Customer.Id(customerId)
+        id = Account.Id(id!!),
+        name = name!!,
+        balance = MonetaryAmount(balance!!),
+        customerId = Customer.Id(customerId!!)
     )
 
     context(DSLContext) suspend fun add(accountId: Account.Id, amount: Int): Int? {

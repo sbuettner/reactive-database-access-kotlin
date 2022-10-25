@@ -37,7 +37,9 @@ class DemoTests(@Autowired val bank: Bank) {
             customer.id.shouldBe(account.customerId)
             account.balance.value.shouldBe(0)
 
-            bank.openAccount(Customer.Id(UUID.randomUUID()), "Account")
+            val randomCustomerId = Customer.Id(UUID.randomUUID())
+            bank.openAccount(randomCustomerId, "Account")
+                .shouldBeLeft(Error.OpenAccount.CustomerNotFound(randomCustomerId))
 
             bank.deposit(account.id, 10.money())
             val accounts = bank.findAccountsWithTransactions(customer.id)

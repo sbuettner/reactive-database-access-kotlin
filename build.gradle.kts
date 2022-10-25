@@ -26,15 +26,23 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("org.springframework.boot:spring-boot-starter-jooq")
+    implementation("io.r2dbc:r2dbc-pool:0.9.2.RELEASE")
     implementation("org.postgresql:r2dbc-postgresql:1.0.0.RC1")
-    implementation("org.jooq:jooq:3.17.4")
+
+    val jooqVersion = "3.17.4"
+    implementation("org.jooq:jooq:$jooqVersion")
+    implementation("org.jooq:jooq-kotlin:$jooqVersion")
+    implementation("org.jooq:jooq-kotlin-coroutines:$jooqVersion")
+
     implementation(platform("io.arrow-kt:arrow-stack:1.1.3"))
     implementation("io.arrow-kt:arrow-core")
     implementation("io.arrow-kt:arrow-fx-coroutines")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("io.kotest:kotest-assertions-core-jvm:5.5.1")
     testImplementation("io.kotest.extensions:kotest-assertions-arrow:1.2.5")
+
     jooqCodegen("org.postgresql:postgresql:42.5.0")
 }
 
@@ -46,6 +54,9 @@ tasks.withType<KotlinCompile> {
 }
 
 tasks.withType(dev.monosoul.jooq.GenerateJooqClassesTask::class) {
+    usingJavaConfig {
+        this.name = "org.jooq.codegen.KotlinGenerator"
+    }
     basePackageName.set("sbuettner.demo.db")
 }
 
