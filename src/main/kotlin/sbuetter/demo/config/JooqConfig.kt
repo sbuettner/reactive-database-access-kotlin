@@ -10,4 +10,5 @@ class JooqConfig(val connectionFactory: ConnectionFactory) {
 
     @Bean
     fun dsl() = DSL.using(connectionFactory)
+    
 }

@@ -1,6 +1,6 @@
 package sbuetter.demo.db
 
-import kotlinx.coroutines.reactive.awaitFirst
+import kotlinx.coroutines.reactive.awaitSingle
 import org.jooq.DSLContext
 import org.springframework.stereotype.Component
 import sbuetter.demo.model.Account
@@ -21,7 +21,7 @@ class TransactionRepository {
                     else -> null
                 }
             ).set(TRANSACTIONS.AMOUNT, transaction.amount.value).set(TRANSACTIONS.TYPE, transaction.type()).returning()
-            .awaitFirst().toTransaction()
+            .awaitSingle().toTransaction()
     }
 
     fun Transaction.type() = when (this) {

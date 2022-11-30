@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "3.0.0-RC1"
+    id("org.springframework.boot") version "3.0.0"
     id("io.spring.dependency-management") version "1.1.0"
     id("org.flywaydb.flyway") version "9.5.1"
     id("dev.monosoul.jooq-docker") version "1.3.12"
@@ -16,7 +16,6 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
-    maven { url = uri("https://repo.spring.io/milestone") }
 }
 
 dependencies {
@@ -26,24 +25,22 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("org.springframework.boot:spring-boot-starter-jooq")
-    implementation("io.r2dbc:r2dbc-pool:1.0.0.RC1")
-    implementation("org.postgresql:r2dbc-postgresql:1.0.0.RC1")
+    implementation("io.r2dbc:r2dbc-pool:1.0.0.RELEASE")
+    implementation("org.postgresql:r2dbc-postgresql:1.0.0.RELEASE")
 
-    val jooqVersion = "3.17.4"
+    val jooqVersion = "3.17.5"
     implementation("org.jooq:jooq:$jooqVersion")
     implementation("org.jooq:jooq-kotlin:$jooqVersion")
     implementation("org.jooq:jooq-kotlin-coroutines:$jooqVersion")
 
-    implementation(platform("io.arrow-kt:arrow-stack:1.1.3"))
-    implementation("io.arrow-kt:arrow-core")
-    implementation("io.arrow-kt:arrow-fx-coroutines")
+    implementation("io.arrow-kt:arrow-core:1.1.4-alpha.16")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
-    testImplementation("io.kotest:kotest-assertions-core-jvm:5.5.1")
-    testImplementation("io.kotest.extensions:kotest-assertions-arrow:1.2.5")
+    testImplementation("io.kotest:kotest-assertions-core-jvm:5.5.4")
+    testImplementation("io.kotest.extensions:kotest-assertions-arrow:1.3.0")
 
-    jooqCodegen("org.postgresql:postgresql:42.5.0")
+    jooqCodegen("org.postgresql:postgresql:42.5.1")
 }
 
 tasks.withType<KotlinCompile> {

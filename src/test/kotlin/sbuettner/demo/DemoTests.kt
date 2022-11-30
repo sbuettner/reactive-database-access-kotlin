@@ -32,8 +32,8 @@ class DemoTests(@Autowired val bank: Bank) {
     @Test
     fun testBank() {
         runBlocking {
-            val customer = bank.createCustomer("Customer").orNull()!!
-            val account = bank.openAccount(customer.id, "Account").orNull()!!
+            val customer = bank.createCustomer("Customer").getOrNull()!!
+            val account = bank.openAccount(customer.id, "Account").getOrNull()!!
             customer.id.shouldBe(account.customerId)
             account.balance.value.shouldBe(0)
 
@@ -45,17 +45,17 @@ class DemoTests(@Autowired val bank: Bank) {
             val accounts = bank.findAccountsWithTransactions(customer.id)
             accounts.first().account.balance.value.shouldBe(10)
 
-            bank.withdraw(account.id, 10.money()).shouldBeRight()
-            bank.deposit(account.id, 10.money())
-
             bank.withdraw(account.id, 1000.money())
                 .shouldBeLeft(Error.Transaction.CreditLineExceeded(-990))
+
+            bank.withdraw(account.id, 10.money()).shouldBeRight()
+            bank.deposit(account.id, 10.money())
 
             val expectedError = Error.CreateCustomer.CustomerNameAlreadyExists(customer.name)
             bank.createCustomer(customer.name).shouldBeLeft(expectedError)
 
-            val otherCustomer = bank.createCustomer("Other customer").orNull()!!
-            val otherAccount = bank.openAccount(otherCustomer.id, "Other Account").orNull()!!
+            val otherCustomer = bank.createCustomer("Other customer").getOrNull()!!
+            val otherAccount = bank.openAccount(otherCustomer.id, "Other Account").getOrNull()!!
 
             bank.transfer(account.id, otherAccount.id, 5.money()).shouldBeRight()
 

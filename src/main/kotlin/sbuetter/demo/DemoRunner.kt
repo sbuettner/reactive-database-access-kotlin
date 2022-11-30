@@ -12,12 +12,14 @@ import sbuetter.demo.model.money
 @Component
 @Profile("!test")
 class DemoRunner(val bank: Bank) : CommandLineRunner {
+
     private val log = LoggerFactory.getLogger(DemoRunner::class.java)
 
     override fun run(vararg args: String?) {
         runBlocking {
-            bank.clean()
             either {
+                bank.clean().bind()
+
                 val customer1 = bank.createCustomer("Customer 1").bind()
                 val account1 = bank.openAccount(customer1.id, "Account 1").bind()
 

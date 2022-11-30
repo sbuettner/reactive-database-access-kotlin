@@ -19,7 +19,7 @@ import sbuettner.demo.db.tables.Transactions.Companion.TRANSACTIONS
 import sbuettner.demo.db.tables.records.AccountsRecord
 
 @Component
-class AccountRepository(private val dsl: DSLContext) {
+class AccountRepository(val dsl: DSLContext) {
 
     context (DSLContext) suspend fun save(account: Account) = insertInto(ACCOUNTS)
         .set(ACCOUNTS.ID, account.id.value)
