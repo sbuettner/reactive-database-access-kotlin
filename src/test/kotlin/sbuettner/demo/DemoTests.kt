@@ -3,7 +3,6 @@ package sbuettner.demo
 import io.kotest.assertions.arrow.core.shouldBeLeft
 import io.kotest.assertions.arrow.core.shouldBeRight
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -12,9 +11,9 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import sbuetter.demo.Bank
 import sbuetter.demo.DemoApplication
-import sbuetter.demo.Error
 import sbuetter.demo.model.Account
 import sbuetter.demo.model.Customer
+import sbuetter.demo.model.Error
 import sbuetter.demo.model.money
 import java.util.UUID
 
@@ -25,7 +24,7 @@ class DemoTests(@Autowired val bank: Bank) {
     @BeforeEach
     fun clean() {
         runBlocking {
-            bank.clean()
+            bank.clean().getOrNull()
         }
     }
 
@@ -42,7 +41,7 @@ class DemoTests(@Autowired val bank: Bank) {
                 .shouldBeLeft(Error.OpenAccount.CustomerNotFound(randomCustomerId))
 
             bank.deposit(account.id, 10.money())
-            val accounts = bank.findAccountsWithTransactions(customer.id)
+            val accounts = bank.findAccountsWithTransactions(customer.id).getOrNull()!!
             accounts.first().account.balance.value.shouldBe(10)
 
             bank.withdraw(account.id, 1000.money())

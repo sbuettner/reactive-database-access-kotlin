@@ -2,20 +2,19 @@ package sbuetter.demo.db
 
 import arrow.core.Either
 import arrow.core.Either.Companion.catch
+import arrow.core.continuations.EffectScope
+import arrow.core.continuations.effect
+import arrow.core.flatten
 import io.r2dbc.spi.Connection
-import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
-import kotlinx.coroutines.reactive.awaitLast
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.mono
 import org.jooq.DSLContext
-import org.jooq.Publisher
 import org.jooq.SQLDialect
 import org.jooq.conf.Settings
 import org.jooq.impl.DSL
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.stereotype.Component
-import reactor.core.publisher.Flux
 
 @Component
 class DbSupport(val databaseClient: DatabaseClient) {
@@ -24,26 +23,21 @@ class DbSupport(val databaseClient: DatabaseClient) {
 
     private fun Connection.dsl() = DSL.using(this, SQLDialect.POSTGRES, settings)
 
-    suspend fun <T> catchTx(block: suspend DSLContext.() -> T) = catch {
-        databaseClient.inConnection { con ->
-            mono { block.invoke(con.dsl()) }
-        }.awaitSingle()
-    }
-
-    suspend fun <A, B> eitherTx(block: suspend DSLContext.() -> Either<A, B>) = catch {
+    suspend fun <E, A> eitherTx(
+        block: suspend EffectScope<E>.(DSLContext) -> A,
+        mapLeftHandler: (Throwable) -> E
+    ): Either<E, A> = catch {
         databaseClient.inConnection { con ->
             mono {
                 con.beginTransaction().awaitFirstOrNull()
-                block(con.dsl()).map { r ->
+                effect { block(this, con.dsl()) }.toEither().map {
                     con.commitTransaction().awaitFirstOrNull()
-                    r
-                }.mapLeft { e ->
+                    it
+                }.mapLeft {
                     con.rollbackTransaction().awaitFirstOrNull()
-                    e
+                    it
                 }
             }
-        }.awaitLast()
-    }
+        }.awaitSingle()
+    }.mapLeft(mapLeftHandler).flatten()
 }
-
-fun <T> Publisher<T>.toFlow() = Flux.from(this).asFlow()

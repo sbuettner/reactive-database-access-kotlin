@@ -1,4 +1,4 @@
-package sbuetter.demo.db
+package sbuetter.demo.repository
 
 import kotlinx.coroutines.reactive.awaitSingle
 import org.jooq.DSLContext

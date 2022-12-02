@@ -1,7 +1,6 @@
 package sbuetter.demo
 
 import arrow.core.continuations.either
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.boot.CommandLineRunner
@@ -33,7 +32,7 @@ class DemoRunner(val bank: Bank) : CommandLineRunner {
 
                 bank.transfer(account1.id, account2.id, 5.money())
 
-                val accountsOfCustomer1 = bank.findAccountsWithTransactions(customer1.id).toList()
+                val accountsOfCustomer1 = bank.findAccountsWithTransactions(customer1.id).getOrNull()
                 log.info("{}", accountsOfCustomer1)
 
                 bank.withdraw(account1.id, 1000.money()).bind()

@@ -1,7 +1,4 @@
-package sbuetter.demo
-
-import sbuetter.demo.model.Account
-import sbuetter.demo.model.Customer
+package sbuetter.demo.model
 
 sealed interface Error {
 
