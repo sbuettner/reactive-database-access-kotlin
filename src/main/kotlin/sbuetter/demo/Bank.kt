@@ -25,10 +25,8 @@ class Bank(
     private val dbSupport: DbSupport
 ) {
 
-    suspend fun clean(): Either<Error.Database, Unit> = dbSupport.eitherTx({
-        with(it) {
-            customerRepository.deleteAll()
-        }
+    suspend fun clean() = dbSupport.eitherTx({
+        customerRepository.deleteAll()
     }, { Error.Database(it) })
 
     suspend fun createCustomer(name: String) = dbSupport.eitherTx({
@@ -36,9 +34,7 @@ class Bank(
             id = Customer.Id(UUID.randomUUID()),
             name = name
         )
-        with(it) {
-            customerRepository.save(customer)
-        }
+        customerRepository.save(customer)
     }, { e ->
         when {
             e.isConstraintException("customers_name_key") -> Error.CreateCustomer.CustomerNameAlreadyExists(name)
@@ -53,9 +49,7 @@ class Bank(
             name = name,
             balance = MonetaryAmount(0)
         )
-        with(it) {
-            accountRepository.save(account)
-        }
+        accountRepository.save(account)
     }, { e: Throwable ->
         when {
             e.isConstraintException("accounts_customer_id_fkey") -> Error.OpenAccount.CustomerNotFound(customerId)
@@ -72,10 +66,8 @@ class Bank(
             accountId = accountId,
             amount = amount
         )
-        with(it) {
-            deposit.accountId.add(deposit.amount.value).bind()
-            transactionRepository.save(deposit)
-        }
+        deposit.accountId.add(deposit.amount.value).bind()
+        transactionRepository.save(deposit)
     }, { Error.Database(it) })
 
     suspend fun withdraw(accountId: Account.Id, amount: MonetaryAmount) = dbSupport.eitherTx<Error.Withdrawal, Unit>({
@@ -84,10 +76,8 @@ class Bank(
             accountId = accountId,
             amount = amount
         )
-        with(it) {
-            withdrawal.accountId.add(-withdrawal.amount.value).bind()
-            transactionRepository.save(withdrawal)
-        }
+        withdrawal.accountId.add(-withdrawal.amount.value).bind()
+        transactionRepository.save(withdrawal)
     }, { Error.Database(it) })
 
     suspend fun transfer(
@@ -101,11 +91,9 @@ class Bank(
             toAccountId = toAccountId,
             amount = amount
         )
-        with(it) {
-            transfer.toAccountId.add(transfer.amount.value).bind()
-            transfer.fromAccountId.add(-transfer.amount.value).bind()
-            transactionRepository.save(transfer)
-        }
+        transfer.toAccountId.add(transfer.amount.value).bind()
+        transfer.fromAccountId.add(-transfer.amount.value).bind()
+        transactionRepository.save(transfer)
     }, { Error.Database(it) })
 
     context (DSLContext)
@@ -119,8 +107,6 @@ class Bank(
         }
 
     suspend fun findAccountsWithTransactions(customerId: Customer.Id) = dbSupport.eitherTx({
-        with(it) {
-            accountRepository.fetchAccountsWithTransactions(customerId)
-        }
+        accountRepository.fetchAccountsWithTransactions(customerId)
     }, { it })
 }

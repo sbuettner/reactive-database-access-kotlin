@@ -1,13 +1,13 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "3.0.0"
+    id("org.springframework.boot") version "3.0.2"
     id("io.spring.dependency-management") version "1.1.0"
-    id("org.flywaydb.flyway") version "9.5.1"
-    id("dev.monosoul.jooq-docker") version "1.3.12"
+    id("org.flywaydb.flyway") version "9.8.1"
+    id("dev.monosoul.jooq-docker") version "3.0.7"
     id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
-    kotlin("jvm") version "1.7.20"
-    kotlin("plugin.spring") version "1.7.20"
+    kotlin("jvm") version "1.8.10"
+    kotlin("plugin.spring") version "1.8.10"
 }
 
 group = "sbuettner.demo"
@@ -28,19 +28,19 @@ dependencies {
     implementation("io.r2dbc:r2dbc-pool:1.0.0.RELEASE")
     implementation("org.postgresql:r2dbc-postgresql:1.0.0.RELEASE")
 
-    val jooqVersion = "3.17.5"
+    val jooqVersion = "3.17.8"
     implementation("org.jooq:jooq:$jooqVersion")
     implementation("org.jooq:jooq-kotlin:$jooqVersion")
     implementation("org.jooq:jooq-kotlin-coroutines:$jooqVersion")
 
-    implementation("io.arrow-kt:arrow-core:1.1.4-alpha.16")
+    implementation("io.arrow-kt:arrow-core:1.1.5")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
-    testImplementation("io.kotest:kotest-assertions-core-jvm:5.5.4")
+    testImplementation("io.kotest:kotest-assertions-core-jvm:5.5.5")
     testImplementation("io.kotest.extensions:kotest-assertions-arrow:1.3.0")
 
-    jooqCodegen("org.postgresql:postgresql:42.5.1")
+    jooqCodegen("org.postgresql:postgresql:42.5.3")
 }
 
 tasks.withType<KotlinCompile> {
